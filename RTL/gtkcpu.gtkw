@@ -1,0 +1,32 @@
+[*]
+[*] GTKWave Analyzer v3.3.86 (w)1999-2017 BSI
+[*] Tue Jun 15 01:36:57 2021
+[*]
+[dumpfile] "/mnt/f/Github/6502-HDL/RTL/cpu_test.vcd"
+[dumpfile_mtime] "Tue Jun 15 01:35:10 2021"
+[dumpfile_size] 2775
+[savefile] "/mnt/f/Github/6502-HDL/RTL/gtkcpu.gtkw"
+[timestart] 0
+[size] 1000 600
+[pos] -1 -1
+*-13.000000 8000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] cpu_tb.
+[treeopen] cpu_tb.uut.
+[sst_width] 213
+[signals_width] 198
+[sst_expanded] 1
+[sst_vpaned_height] 151
+@28
+cpu_tb.uut.clk
+cpu_tb.uut.RST
+@23
+cpu_tb.uut.microcode_out_w[15:0]
+@22
+cpu_tb.uut.SRWH[7:0]
+cpu_tb.uut.SRWL[7:0]
+cpu_tb.uut.PCH[8:0]
+cpu_tb.uut.PCL[8:0]
+cpu_tb.uut.ADH[7:0]
+cpu_tb.uut.ADL[7:0]
+[pattern_trace] 1
+[pattern_trace] 0
