@@ -1,32 +1,33 @@
 
 // -----------------------------------------------------------------------------
 // Author : Afonso Muralha afonsomuralha(at)gmail.com
-// File   : microcode_rom.v
+// File   : program_rom.v
 // Create : 12/6/2021
 // Revise : N/A
 // Description:
-//  Microcode ROM.
+//  Program ROM.
 // -----------------------------------------------------------------------------
 
-module microcode_rom #(
-    parameter WORD_SIZE = 16,
-    parameter ROM_SIZE = 1024
+module program_rom #(
+    parameter WORD_SIZE = 8,
+    parameter NBIT = 15
 ) (
-    input clk,
-    input [$clog2(ROM_SIZE)-1:0] addr,
+    input [NBIT-1:0] addr,
+    input nCE,
     output reg [WORD_SIZE-1:0] word_out
 );
 
     
 
-    reg [WORD_SIZE-1:0] mem[ROM_SIZE-1:0];
+    reg [WORD_SIZE-1:0] mem [2**NBIT-1:0];
 
     initial begin
-        $readmemb("microcode.hex", mem, 0); 
+        $readmemh("program_ROM.hex", mem, 0); 
     end
 
-    always @(posedge clk) begin
-        word_out <= mem[addr];
+    always @(*) begin
+        //if(nCE)//!nCE
+            word_out <= mem[addr];
     end
     
 endmodule

@@ -15,7 +15,7 @@ module CPU (
     input SO,
     input IRQ,
     output [15:0] A_BUS,
-    inout [7:0] D_BUS,
+    input [7:0] D_BUS, //input only for now
     output RW,
     output SYNC,
     output PHI_1_OUT,
@@ -45,7 +45,9 @@ module CPU (
     reg [7:0] A;    //Accumulator "A" register
     reg [7:0] X;
     reg [7:0] Y;
-    reg [3:0] MCPC;
+    reg [1:0] MCPC;
+    reg [8:0] IR;  //intruction register
+
 
     //status register flags
     reg sr_N;
@@ -67,11 +69,11 @@ module CPU (
 
     wire [9:0] microcode_addr_w;
     wire [15:0] microcode_out_w;
+    assign microcode_addr_w = {IR,MCPC};
     parameter mc_bit_x = 0;
     microcode_rom microcode(
         .clk(clk),
-        //.addr(microcode_addr_w),
-        .addr(0),
+        .addr(microcode_addr_w),
         .word_out(microcode_out_w)
     );
 
@@ -82,6 +84,7 @@ module CPU (
     reg [7:0] ADL;
     reg [7:0] SRWH;
     reg [7:0] SRWL;
+    assign A_BUS = {ADH, ADL};
 
     wire [7:0] inc_dec_in_H;
     wire [7:0] inc_dec_in_L;
@@ -113,9 +116,13 @@ module CPU (
 
     end
 
-    //ADH access
+    //AD access
     always @(*) begin
-        if(microcode_out_w[mc_INC_DEC]) begin
+        if(!RST) begin
+            ADH <= 0;
+            ADL <= 0;
+        end
+        else if(microcode_out_w[mc_INC_DEC]) begin
             ADH <= PCH; //loads PCL/PCH onto the AD bus for the inc/dec to read
             ADL <= PCL;
         end
@@ -136,14 +143,19 @@ module CPU (
 
     //microinstruction counter logic
     always @(posedge clk) begin
-        if(!RST || microcode_out_w[mc_END])
+        if(!RST || microcode_out_w[mc_END]) begin
             MCPC <= 0;
+            IR <= D_BUS;
+        end
         else
             MCPC <= MCPC + 1;
+        if(microcode_out_w[mc_PC_AD])
+            IR <= D_BUS;
+        
     end
 
     //PC logic
-    always @(negedge clk) begin
+    always @(posedge clk) begin
         if(!RST) begin
             PCL <= 0;
             PCH <= 0;

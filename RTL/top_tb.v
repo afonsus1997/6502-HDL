@@ -6,16 +6,24 @@ module cpu_tb;
    
     reg reset;
     reg clock;
+    wire [15:0] addr_bus_w;
+    wire [7:0] data_bus_w;
+
+    program_rom PROG_ROM(
+        .addr(addr_bus_w[14:0]),
+        .nCE(addr_bus_w[15]),
+        .word_out(data_bus_w)
+    );
 
     CPU uut (
         // .RDY,
         .clk(clock),
-        .RST(reset)
+        .RST(reset),
         // .NMI,
         // .SO,
         // .IRQ,
-        // .A_BUS,
-        // .D_BUS
+        .A_BUS(addr_bus_w),
+        .D_BUS(data_bus_w)
         // .RW,
         // .SYNC,
         // .PHI_1_OUT,
