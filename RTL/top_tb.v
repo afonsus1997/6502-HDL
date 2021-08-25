@@ -6,6 +6,7 @@ module cpu_tb;
    
     reg reset;
     reg clock;
+    integer clockn;
     wire [15:0] addr_bus_w;
     wire [7:0] data_bus_w;
 
@@ -38,6 +39,7 @@ module cpu_tb;
         $dumpvars();
         clock = 0;
         reset = 0;
+        clockn = 0;
     end
 
     initial begin
@@ -48,12 +50,32 @@ module cpu_tb;
     end
 
     initial begin
-        #100 $finish;
+        $display("\n\n\n");
+        $display("+--------+--------+--------+--------+----+--------+--------+--------+-------------------------+");
+        $display("|Clock # |     PC |   DBus |   Abus | RW | SRWBus |     IR |   MCPC |         CurrMC |     SP |");
+        $display("+--------+--------+--------+--------+----+--------+--------+--------+-------------------------+");
+        #50 
+        $display("+---------------------------------------------------------------------------------------------+");
+        $display("\n\n\n");
+        $finish;
+        
     end
+
+    // always @(posedge clock) begin
+        
+    // end
 
 
     always begin
         #2  clock =  ! clock;
+        
     end
+
+    always @(posedge clock) begin
+        clockn++;
+        if(clockn >=3)
+            $display("|%8h|%8h|%8h|%8h|  %1d |%8h|%8h|%8h|%16b|%8h|",clockn, {uut.PCH,uut.PCL}, addr_bus_w, data_bus_w, uut.RW, {uut.SRWH, uut.SRWL}, uut.IR, uut.MCPC, uut.microcode_out_w, {uut.SPH,uut.SPH});
+    end
+
 
 endmodule
