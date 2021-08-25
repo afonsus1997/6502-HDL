@@ -51,11 +51,11 @@ module cpu_tb;
 
     initial begin
         $display("\n\n\n");
-        $display("+--------+--------+--------+--------+----+--------+--------+--------+-------------------------+");
-        $display("|Clock # |     PC |   DBus |   Abus | RW | SRWBus |     IR |   MCPC |         CurrMC |     SP |");
-        $display("+--------+--------+--------+--------+----+--------+--------+--------+-------------------------+");
-        #50 
-        $display("+---------------------------------------------------------------------------------------------+");
+        $display("+--------+---+--------+--------+--------+----+--------+--------+--------+----------------+--------+");
+        $display("|Clock # |RST|     PC |   DBus |   Abus | RW | SRWBus |     IR |   MCPC |         CurrMC |     SP |");
+        $display("+--------+---+--------+--------+--------+----+--------+--------+--------+----------------+--------+");
+        #70 
+        $display("+--------+---+--------+--------+--------+----+--------+--------+--------+----------------+--------+");
         $display("\n\n\n");
         $finish;
         
@@ -73,8 +73,8 @@ module cpu_tb;
 
     always @(posedge clock) begin
         clockn++;
-        if(clockn >=3)
-            $display("|%8h|%8h|%8h|%8h|  %1d |%8h|%8h|%8h|%16b|%8h|",clockn, {uut.PCH,uut.PCL}, addr_bus_w, data_bus_w, uut.RW, {uut.SRWH, uut.SRWL}, uut.IR, uut.MCPC, uut.microcode_out_w, {uut.SPH,uut.SPH});
+        if(clockn >=2)
+            $display("|%8h| %1d |%8h|%8h|%8h| %1d  |%8h|%8h|%8h|%16b|%8h|",clockn, reset, {uut.PCH,uut.PCL}, addr_bus_w, data_bus_w, uut.RW, {uut.SRWH, uut.SRWL}, uut.IR, uut.MCPC, uut.microcode_out_w, {uut.SPH,uut.SPH});
     end
 
 

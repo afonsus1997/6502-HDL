@@ -182,6 +182,18 @@ module CPU (
             SPH <= SRWH;
         end
     end
+
+    always @(posedge clk) begin
+        if(microcode_out_w[mc_TRAP]) begin
+            $display("+--------+---+--------+--------+--------+----+--------+--------+--------+----------------+--------+\n");
+
+            $display("Trap activated!");
+
+            $display("\n+--------+---+--------+--------+--------+----+--------+--------+--------+----------------+--------+");
+            $display("|Clock # |RST|     PC |   DBus |   Abus | RW | SRWBus |     IR |   MCPC |         CurrMC |     SP |");
+            $display("+--------+---+--------+--------+--------+----+--------+--------+--------+----------------+--------+");
+        end
+    end
     
     
 endmodule

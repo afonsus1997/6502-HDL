@@ -9,22 +9,24 @@ mc_mem_len = 0xFF
 max_instruction_len = 8
 
 microcode_template = [0b0000000000000000] * max_instruction_len
+microcode_template[-1] = 0b0000000000000001
 # microcode_template = [1, 2, 3, 4, 5, 6, 7, 8]
 
-instruction_template = {"name": "UKN", "len": 0, "microcode": [0] * max_instruction_len}
+instruction_template = {"name": "UKN", "len": 0, "microcode": microcode_template}
 
 
 
 
 
 mc_END = 0b1 << 0
-mc_IR_DB = 0b1 << 1 #load IR with DB contents
-mc_INC_DEC_OP = 0b1 << 2
-mc_INC_DEC = 0b1 << 3 #INC_DEC SRW ACCESS
-mc_PC_SRW = 0b1 << 4 #PC GETS registered by SRW bus
-mc_PC_AD = 0b1 << 5 #fetches instruction indexed by PC from data bus to IR
-mc_SP_AD = 0b1 << 6 #connects stack pointer to abus
-mc_SP_SRW = 0b1 << 7 #SP GETS registered by SRW bus
+mc_TRAP = 0b1 << 1
+mc_IR_DB = 0b1 << 2 #load IR with DB contents
+mc_INC_DEC_OP = 0b1 << 3
+mc_INC_DEC = 0b1 << 4 #INC_DEC SRW ACCESS
+mc_PC_SRW = 0b1 << 5 #PC GETS registered by SRW bus
+mc_PC_AD = 0b1 << 6 #fetches instruction indexed by PC from data bus to IR
+mc_SP_AD = 0b1 << 7 #connects stack pointer to abus
+mc_SP_SRW = 0b1 << 8 #SP GETS registered by SRW bus
 
 # opcodes = [instruction_template] * mc_mem_len
 opcodes = []
@@ -34,19 +36,20 @@ for i in range(mc_mem_len):
 
 opcodes[0x00]['name'] = 'BRK' 
 opcodes[0x00]['len'] = 7 
-opcodes[0x00]['microcode'][0] = mc_PC_AD #fetch instruction
+opcodes[0x00]['microcode'][0] = mc_PC_AD | mc_IR_DB #fetch instruction
 opcodes[0x00]['microcode'][1] = mc_INC_DEC_OP | mc_INC_DEC | mc_PC_SRW | mc_PC_AD #PC+1
 opcodes[0x00]['microcode'][2] = mc_SP_AD #ABUS=STACKPTR DBUS=PCH
 opcodes[0x00]['microcode'][3] = mc_INC_DEC | mc_SP_SRW | mc_SP_AD #SP-1
-opcodes[0x00]['microcode'][4] = mc_END
+opcodes[0x00]['microcode'][4] = mc_END | mc_PC_AD | mc_IR_DB
 
 opcodes[0x01]['name'] = 'ORA' 
 opcodes[0x01]['len'] = 6
-opcodes[0x01]['microcode'][2] = mc_END
+opcodes[0x01]['microcode'][1] = mc_END
 
 opcodes[0x02]['name'] = 'DUMMY' 
-opcodes[0x02]['len'] = 7
-opcodes[0x02]['microcode'][0] = mc_INC_DEC_OP | mc_INC_DEC | mc_PC_SRW | mc_PC_AD
+opcodes[0x02]['len'] = 3
+opcodes[0x02]['microcode'][0] = mc_PC_AD #| mc_IR_DB #fetch instruction
+opcodes[0x02]['microcode'][1] = mc_TRAP
 opcodes[0x02]['microcode'][2] = mc_END
 
 opcodes[0x05]['name'] = 'ORA' 
