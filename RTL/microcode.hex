@@ -1,5 +1,5 @@
 //assuming [OP:MCPC]
-//           8bit:2bit
+//           8bit:3bit
 0000000000111110 //increment PC and write it to AD
 0000000000000000
 0000000000000001 //end

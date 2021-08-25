@@ -22,7 +22,7 @@ module microcode_rom #(
     reg [WORD_SIZE-1:0] mem[ROM_SIZE-1:0];
 
     initial begin
-        $readmemb("microcode.hex", mem, 0); 
+        $readmemb("microcode_gen.hex", mem, 0); 
     end
 
     always @(posedge clk) begin

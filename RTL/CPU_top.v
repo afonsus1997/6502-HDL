@@ -45,7 +45,7 @@ module CPU (
     reg [7:0] A;    //Accumulator "A" register
     reg [7:0] X;
     reg [7:0] Y;
-    reg [1:0] MCPC;
+    reg [2:0] MCPC;
     reg [8:0] IR;  //intruction register
 
 
@@ -122,15 +122,19 @@ module CPU (
             ADH <= 0;
             ADL <= 0;
         end
-        else if(microcode_out_w[mc_INC_DEC]) begin
+        else if(microcode_out_w[mc_PC_AD]) begin
             ADH <= PCH; //loads PCL/PCH onto the AD bus for the inc/dec to read
             ADL <= PCL;
+        end
+        else if(microcode_out_w[mc_SP_AD]) begin
+            ADH <= SPH; //loads SPL/SPH onto the AD bus
+            ADL <= SPL; //loads SPL/SPH onto the AD bus
         end
     end
 
     //SRW access
     always @(*) begin
-        if(microcode_out_w[mc_INC_DEC]) begin
+        if(microcode_out_w[mc_INC_DEC] | microcode_out_w[mc_SP_SRW]) begin
             SRWH <= inc_dec_out_H; //connects the output of the inc/dec to the special reg bus
             SRWL <= inc_dec_out_L;
         end
@@ -145,11 +149,11 @@ module CPU (
     always @(posedge clk) begin
         if(!RST || microcode_out_w[mc_END]) begin
             MCPC <= 0;
-            IR <= D_BUS;
+            IR <= 0;
         end
         else
             MCPC <= MCPC + 1;
-        if(microcode_out_w[mc_PC_AD])
+        if(microcode_out_w[mc_IR_DB]) //
             IR <= D_BUS;
         
     end
@@ -165,6 +169,18 @@ module CPU (
             PCH <= SRWH;
         end
 
+    end
+
+    //SP Logic
+    always @(posedge clk) begin
+        if(!RST) begin
+            SPH <= 0;
+            SPL <= 0;
+        end
+        else if (microcode_out_w[mc_SP_SRW]) begin
+            SPL <= SRWL;
+            SPH <= SRWH;
+        end
     end
     
     
